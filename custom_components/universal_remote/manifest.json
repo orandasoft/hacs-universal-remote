@@ -1,0 +1,14 @@
+{
+  "domain": "universal_remote",
+  "name": "Universal Remote",
+  "codeowners": ["@orandasoft"],
+  "config_flow": true,
+  "dependencies": ["infrared"],
+  "documentation": "https://github.com/orandasoft/hacs-universal-remote",
+  "issue_tracker": "https://github.com/orandasoft/hacs-universal-remote/issues",
+  "integration_type": "helper",
+  "iot_class": "assumed_state",
+  "loggers": ["custom_components.universal_remote"],
+  "requirements": [],
+  "version": "0.1.0"
+}

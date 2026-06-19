@@ -1,0 +1,11 @@
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "-q"
+
+[tool.coverage.run]
+source = ["custom_components/universal_remote"]
+
+[tool.coverage.report]
+show_missing = true

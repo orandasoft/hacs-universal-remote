@@ -1,0 +1,299 @@
+{
+  "config": {
+    "abort": {
+      "already_configured": "A universal remote with this name is already configured.",
+      "no_available_infrared_entities": "No infrared entities are available.",
+      "no_universal_remotes": "No universal remotes are configured.",
+      "reconfigure_successful": "Reconfiguration was successful."
+    },
+    "error": {
+      "infrared_entity_unavailable": "Selected infrared entity is unavailable.",
+      "invalid_device_type": "Selected device type is invalid.",
+      "invalid_import_mode": "Selected import option is invalid.",
+      "invalid_library_codeset": "Selected infrared library codeset is invalid.",
+      "invalid_library_command": "The selected infrared library codeset could not be imported.",
+      "invalid_repeat_count": "Repeat count must be zero or greater.",
+      "library_commands_required": "Select at least one infrared library command.",
+      "remote_name_required": "Remote name is required."
+    },
+    "step": {
+      "import_commands": {
+        "data": {
+          "create_button": "Create button entities",
+          "import_commands": "Import commands from this codeset?"
+        },
+        "data_description": {
+          "create_button": "Create button entities for imported commands.",
+          "import_commands": "Choose whether to import commands from the selected infrared library codeset during setup."
+        },
+        "description": "The selected codeset is {codeset}.",
+        "title": "Import Commands"
+      },
+      "reconfigure": {
+        "data": {
+          "device_type": "Device type",
+          "infrared_entity_id": "Infrared entity",
+          "name": "Remote name"
+        },
+        "data_description": {
+          "device_type": "Type of device this universal remote represents.",
+          "infrared_entity_id": "Infrared entity that will transmit commands for this universal remote.",
+          "name": "Name of the universal remote."
+        },
+        "description": "Update the configured universal remote.",
+        "title": "Reconfigure Universal Remote"
+      },
+      "reconfigure_codeset": {
+        "data": {
+          "codeset": "Infrared library codeset"
+        },
+        "data_description": {
+          "codeset": "Infrared library codeset used to generate commands."
+        },
+        "description": "Select an infrared library codeset for the {device_type} device type.",
+        "title": "Select Codeset"
+      },
+      "select_codeset": {
+        "data": {
+          "codeset": "Infrared library codeset"
+        },
+        "data_description": {
+          "codeset": "Infrared library codeset used to generate commands."
+        },
+        "description": "Select an infrared library codeset for the {device_type} device type.",
+        "title": "Select Codeset"
+      },
+      "select_library_commands": {
+        "data": {
+          "create_button": "Create button entities",
+          "library_commands": "Infrared library commands",
+          "repeat_count": "Repeat count"
+        },
+        "data_description": {
+          "create_button": "Create button entities for imported commands.",
+          "library_commands": "Commands to import from the selected infrared library codeset. Each imported command uses the library command name.",
+          "repeat_count": "Additional repeat count to use when generating the command."
+        },
+        "description": "Select one or more commands from the {codeset} infrared library codeset.",
+        "title": "Select Commands"
+      },
+      "user": {
+        "data": {
+          "device_type": "Device type",
+          "infrared_entity_id": "Infrared entity",
+          "name": "Remote name"
+        },
+        "data_description": {
+          "device_type": "Type of device this universal remote represents.",
+          "infrared_entity_id": "Infrared entity that will transmit commands for this universal remote.",
+          "name": "Name of the universal remote."
+        },
+        "description": "Create a universal remote linked to an infrared entity.",
+        "title": "Create Universal Remote"
+      }
+    }
+  },
+  "exceptions": {
+    "media_player_role_unavailable": {
+      "message": "Media player role {role} is not available."
+    },
+    "media_player_source_unavailable": {
+      "message": "Source {source} is not available."
+    },
+    "remote_command_missing": {
+      "message": "Command {command} is not configured and is not a valid raw infrared command."
+    },
+    "remote_infrared_missing": {
+      "message": "Infrared entity {entity_id} is unavailable or does not exist."
+    },
+    "remote_invalid_command": {
+      "message": "Invalid infrared command: {error}"
+    },
+    "remote_invalid_service_parameter": {
+      "message": "{error}"
+    },
+    "remote_send_failed": {
+      "message": "Failed to send infrared command: {error}"
+    },
+    "remote_unknown_or_invalid_command": {
+      "message": "Unknown or invalid infrared command: {command}"
+    }
+  },
+  "issues": {
+    "linked_infrared_entity_missing": {
+      "description": "Universal remote {remote_name} is linked to infrared entity {infrared_entity_id}, but that entity is unavailable or no longer exists. Open the Universal Remote integration options and select a valid infrared entity.",
+      "title": "Linked infrared entity is missing"
+    }
+  },
+  "options": {
+    "abort": {
+      "command_not_found": "The selected command was not found.",
+      "invalid_library_codeset": "The selected infrared library codeset is not available.",
+      "no_available_infrared_entities": "No infrared entities are available.",
+      "no_remote_commands": "No commands are configured.",
+      "no_universal_remotes": "No universal remotes are configured."
+    },
+    "error": {
+      "command_data_required": "Command data is required.",
+      "command_name_exists": "A command with this name already exists.",
+      "command_name_required": "Command name is required.",
+      "infrared_entity_unavailable": "Selected infrared entity is unavailable.",
+      "invalid_command": "Command data is not a supported infrared command format.",
+      "invalid_command_source": "Selected command source is invalid.",
+      "invalid_device_type": "Selected device type is invalid.",
+      "invalid_library_codeset": "Selected infrared library codeset is invalid.",
+      "invalid_library_command": "The selected infrared library command could not be converted to a supported command format.",
+      "invalid_repeat_count": "Repeat count must be zero or greater.",
+      "library_commands_exist": "These selected library commands already exist: {existing_commands}. Remove them from the selection before submitting.",
+      "library_commands_required": "Select at least one infrared library command.",
+      "remote_name_required": "Remote name is required."
+    },
+    "step": {
+      "add_raw_command": {
+        "data": {
+          "command_data": "Command data",
+          "command_name": "Command name",
+          "create_button": "Create button entity"
+        },
+        "data_description": {
+          "command_data": "Infrared command payload in a supported format.",
+          "command_name": "Name used with remote.send_command.",
+          "create_button": "Create a button entity for this command."
+        },
+        "title": "Add Raw Command"
+      },
+      "edit_command": {
+        "data": {
+          "command_source": "Command source"
+        },
+        "data_description": {
+          "command_source": "Choose whether to enter raw command data or replace the command with data generated from the infrared library."
+        },
+        "title": "Edit Command"
+      },
+      "edit_library_codeset": {
+        "data": {
+          "library_codeset": "Infrared library codeset"
+        },
+        "data_description": {
+          "library_codeset": "Infrared library codeset used to generate the command."
+        },
+        "title": "Select Infrared Library Codeset"
+      },
+      "edit_library_command": {
+        "data": {
+          "create_button": "Create button entity",
+          "library_command": "Infrared library command",
+          "repeat_count": "Repeat count"
+        },
+        "data_description": {
+          "create_button": "Create a button entity for this command.",
+          "library_command": "Command to generate from the selected infrared library codeset. The selected library command name becomes the stored command name.",
+          "repeat_count": "Additional repeat count to use when generating the command."
+        },
+        "description": "Select a command from the {codeset} infrared library codeset.",
+        "title": "Select {codeset} Command"
+      },
+      "edit_raw_command": {
+        "data": {
+          "command_data": "Command data",
+          "command_name": "Command name",
+          "create_button": "Create button entity"
+        },
+        "data_description": {
+          "command_data": "Infrared command payload in a supported format.",
+          "command_name": "Name used with remote.send_command.",
+          "create_button": "Create a button entity for this command."
+        },
+        "title": "Edit Raw Command"
+      },
+      "edit_remote": {
+        "data": {
+          "codeset": "Infrared library codeset",
+          "device_type": "Device type",
+          "infrared_entity_id": "Infrared entity",
+          "name": "Remote name"
+        },
+        "data_description": {
+          "codeset": "Optional infrared library codeset associated with this universal remote. Use Manage commands to import or refresh commands.",
+          "device_type": "Type of device controlled by this universal remote.",
+          "infrared_entity_id": "Infrared entity that will transmit commands for this universal remote.",
+          "name": "Name of the universal remote."
+        },
+        "title": "Edit Universal Remote"
+      },
+      "import_library_command_select": {
+        "data": {
+          "create_button": "Create button entities",
+          "library_commands": "Infrared library commands",
+          "repeat_count": "Repeat count"
+        },
+        "data_description": {
+          "create_button": "Create button entities for imported commands.",
+          "library_commands": "Commands to import from the selected infrared library codeset. Each imported command uses the library command name.",
+          "repeat_count": "Additional repeat count to use when generating the command."
+        },
+        "description": "Select one or more commands from the {codeset} infrared library codeset.",
+        "title": "Import {codeset} Commands"
+      },
+      "import_library_commands": {
+        "data": {
+          "library_codeset": "Infrared library codeset"
+        },
+        "data_description": {
+          "library_codeset": "Infrared library codeset used to generate commands."
+        },
+        "title": "Import Library Commands"
+      },
+      "init": {
+        "menu_options": {
+          "edit_remote": "Edit universal remote",
+          "manage_commands": "Manage commands"
+        },
+        "title": "Universal Remote Options"
+      },
+      "manage_commands": {
+        "menu_options": {
+          "add_raw_command": "Add raw command",
+          "edit_command": "Edit command",
+          "import_library_commands": "Import library commands",
+          "remove_command": "Delete command"
+        },
+        "title": "Manage Commands"
+      },
+      "remove_command": {
+        "data": {
+          "command_name": "Commands"
+        },
+        "data_description": {
+          "command_name": "Commands to delete."
+        },
+        "title": "Delete Commands"
+      },
+      "select_command_for_edit": {
+        "data": {
+          "command_name": "Command"
+        },
+        "data_description": {
+          "command_name": "Command to edit."
+        },
+        "title": "Select Command"
+      }
+    }
+  },
+  "selector": {
+    "command_source": {
+      "options": {
+        "infrared_library": "Infrared library command",
+        "raw": "Raw command"
+      }
+    },
+    "import_commands": {
+      "options": {
+        "all": "Import all commands",
+        "no": "No",
+        "select": "Select commands"
+      }
+    }
+  }
+}
