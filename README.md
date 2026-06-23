@@ -4,7 +4,7 @@ Universal Remote is a Home Assistant custom integration that creates logical inf
 
 It does not communicate with infrared hardware directly. Instead, it stores named infrared commands and asks the linked infrared emitter to transmit them.
 
-This makes it possible to use one infrared transmitter for multiple logical devices, such as TVs, receivers, projectors, HDMI switches, or other infrared-controlled equipment.
+This makes it possible to use one infrared transmitter for multiple logical remotes, such as TVs, projectors, HDMI switches, or other infrared-controlled devices.
 
 > This is a Home Assistant integration for HACS. It is not the Universal Remote Card dashboard plugin.
 
@@ -88,7 +88,7 @@ Depending on the configured options, it can also create:
 - `button` entities for selected commands
 - a `media_player` entity for TV remotes
 
-The TV media player is assumed-state. It does not know the real power, volume, channel, source, or playback state of the physical device. Its supported controls are derived from the commands configured for the remote.
+The TV media player is assumed-state. It does not know the real power, volume, channel, source, or playback state of the physical device, although it may update assumed power and source state after commands are sent through Universal Remote.
 
 ---
 
@@ -176,7 +176,7 @@ When adding or importing commands, the flow can create Home Assistant `button` e
 
 TV remotes create a `media_player` entity.
 
-The media player exposes supported features based on configured command names.
+The media player exposes supported features based on the commands configured for the remote.
 
 Examples:
 
@@ -186,9 +186,13 @@ Examples:
 - `MUTE` enables mute.
 - `CHANNEL_UP` and `CHANNEL_DOWN` enable channel controls.
 - `PLAY`, `PAUSE`, and `STOP` enable playback controls.
-- Source commands such as `HDMI_1`, `TV`, `DTV`, `BS`, or app shortcuts can appear in the source list.
+- Supported source commands can appear in the media player source list.
 
-Because the media player is assumed-state, it sends commands but does not receive real state feedback from the physical device.
+Source support is derived from configured command names.
+
+Commands such as `TV`, `TV_INPUT`, `DTV`, `BS`, `BS4K`, `CS1`, `CS2`, `INPUT`, `SOURCE`, `HDMI_1`, `HDMI_2`, `HDMI_3`, `HDMI_4`, and `HDMI_5` may appear as selectable sources when they are configured for the remote. Component inputs and app shortcuts such as `NETFLIX` or `AMAZON_PRIME` may also appear when supported by the selected codeset.
+
+Because the media player is assumed-state, it sends commands but does not receive real state feedback from the physical device. Source selection updates the assumed source in Home Assistant after Universal Remote sends the selected source command.
 
 ---
 

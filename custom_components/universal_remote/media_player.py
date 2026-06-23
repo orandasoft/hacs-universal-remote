@@ -12,13 +12,12 @@ from homeassistant.components.media_player import (
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import STATE_UNAVAILABLE
 from homeassistant.core import HomeAssistant, callback
-from homeassistant.exceptions import HomeAssistantError
+from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
 from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.helpers.event import async_track_state_change_event
 
-from .command_ui import command_is_media_player_source, command_label
 from .const import (
     CONF_INFRARED_EMITTER_ID,
     CONF_REMOTE_COMMANDS,
@@ -27,6 +26,7 @@ from .const import (
     CONF_REMOTE_NAME,
     DEVICE_TYPE_TV,
     DOMAIN,
+    SOURCE_COMMAND_MAPS,
 )
 from .helpers import (
     command_payload,
@@ -138,14 +138,18 @@ class UniversalRemoteTvMediaPlayer(MediaPlayerEntity):
         self._remote_id = remote_id
         self._infrared_emitter_id = infrared_emitter_id
         self._commands = normalize_command_objects(commands)
-        self._source_commands = _source_commands(self._commands)
+        self._source_commands = _source_commands(
+            self._commands,
+            SOURCE_COMMAND_MAPS[DEVICE_TYPE_TV],
+        )
         self._role_commands = _role_commands(self._commands)
         self._attr_unique_id = unique_id
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, remote_id)},
             name=remote_name,
         )
-        self._attr_source_list = sorted(self._source_commands)
+        self._attr_source_list = list(self._source_commands) or None
+        self._attr_source = None
         self._attr_supported_features = _supported_features(
             self._role_commands,
             self._source_commands,
@@ -224,12 +228,15 @@ class UniversalRemoteTvMediaPlayer(MediaPlayerEntity):
     async def async_select_source(self, source: str) -> None:
         """Select a source by sending the matching command."""
         if (command_name := self._source_commands.get(source)) is None:
-            raise HomeAssistantError(
+            raise ServiceValidationError(
                 translation_domain=DOMAIN,
                 translation_key="media_player_source_unavailable",
                 translation_placeholders={"source": source},
             )
+
         await self._send_command_name(command_name)
+        self._attr_source = source
+        self.async_write_ha_state()
 
     async def _send_role(self, role: str) -> None:
         """Send the command mapped to a media-player role."""
@@ -281,14 +288,19 @@ def _role_commands(commands: Mapping[str, Mapping[str, Any]]) -> dict[str, str]:
     return roles
 
 
-def _source_commands(commands: Mapping[str, Mapping[str, Any]]) -> dict[str, str]:
+def _source_commands(
+    commands: Mapping[str, Mapping[str, Any]],
+    source_command_map: Mapping[str, str],
+) -> dict[str, str]:
     """Return source labels mapped to configured command names."""
+    normalized_commands = {
+        normalize_command_name(command_name): command_name for command_name in commands
+    }
     sources: dict[str, str] = {}
-    for command_name in commands:
-        if not command_is_media_player_source(command_name):
-            continue
 
-        sources.setdefault(command_label(command_name), command_name)
+    for source, candidate_name in source_command_map.items():
+        if candidate_name in normalized_commands:
+            sources[source] = normalized_commands[candidate_name]
 
     return sources
 

@@ -29,7 +29,7 @@ from custom_components.universal_remote.media_player import (
 )
 from homeassistant.const import STATE_UNAVAILABLE
 from homeassistant.core import HomeAssistant
-from homeassistant.exceptions import HomeAssistantError
+from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
 from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.device_registry import DeviceInfo
 
@@ -153,7 +153,7 @@ async def test_async_setup_entry_adds_tv_media_player(
         identifiers={(DOMAIN, REMOTE_ID)},
         name=REMOTE_NAME,
     )
-    assert entity.source_list == ["HDMI 1", "Netflix"]
+    assert entity.source_list == ["Input", "HDMI 1", "Netflix"]
     assert entity.supported_features == (
         MediaPlayerEntityFeature.TURN_ON
         | MediaPlayerEntityFeature.TURN_OFF
@@ -223,16 +223,21 @@ async def test_media_player_commands_send_infrared_command(
     """Test media-player actions send the matching command."""
     entity = _media_player_entity(hass, infrared_emitter)
 
-    with patch(
-        "custom_components.universal_remote.media_player."
-        "async_send_infrared_command",
-        AsyncMock(),
-    ) as mock_send:
+    with (
+        patch(
+            "custom_components.universal_remote.media_player."
+            "async_send_infrared_command",
+            AsyncMock(),
+        ) as mock_send,
+        patch.object(entity, "async_write_ha_state") as write_state,
+    ):
         await entity.async_volume_up()
         await entity.async_select_source("HDMI 1")
 
     assert mock_send.await_args_list[0].args == (hass, infrared_emitter, RAW_COMMAND)
     assert mock_send.await_args_list[1].args == (hass, infrared_emitter, RAW_COMMAND)
+    assert entity.source == "HDMI 1"
+    write_state.assert_called_once()
 
 
 async def test_media_player_role_actions_send_infrared_command(
@@ -305,13 +310,32 @@ async def test_media_player_invalid_source_raises(
     hass: HomeAssistant,
     infrared_emitter: str,
 ) -> None:
-    """Test selecting an invalid source raises HomeAssistantError."""
+    """Test selecting an invalid source raises ServiceValidationError."""
     entity = _media_player_entity(hass, infrared_emitter)
 
-    with pytest.raises(HomeAssistantError) as err:
-        await entity.async_select_source("Input")
+    with pytest.raises(ServiceValidationError) as err:
+        await entity.async_select_source("Missing source")
 
     assert err.value.translation_key == "media_player_source_unavailable"
+    assert err.value.translation_placeholders == {"source": "Missing source"}
+
+
+def test_media_player_without_source_commands_has_no_source_feature(
+    hass: HomeAssistant,
+    infrared_emitter: str,
+) -> None:
+    """Test source support is not exposed when no source commands exist."""
+    entity = _media_player_entity(
+        hass,
+        infrared_emitter,
+        commands={
+            "POWER_ON": _command_object(RAW_COMMAND),
+            "POWER_OFF": _command_object(RAW_COMMAND),
+        },
+    )
+
+    assert entity.source_list is None
+    assert not entity.supported_features & MediaPlayerEntityFeature.SELECT_SOURCE
 
 
 async def test_media_player_missing_role_raises(
