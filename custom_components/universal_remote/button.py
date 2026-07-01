@@ -7,7 +7,6 @@ from homeassistant.components.button import ButtonEntity, ButtonEntityDescriptio
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import entity_registry as er
-from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 from homeassistant.helpers.event import async_track_state_change_event
 
@@ -25,6 +24,7 @@ from .helpers import (
     linked_entity_is_available,
     normalize_command_name,
     normalize_command_objects,
+    universal_remote_device_info,
     universal_remotes_from_config_entry,
 )
 from .send import async_send_infrared_command
@@ -147,10 +147,7 @@ class UniversalRemoteButton(ButtonEntity):
         self.entity_description = description
         self._infrared_emitter_id = infrared_emitter_id
         self._attr_unique_id = unique_id
-        self._attr_device_info = DeviceInfo(
-            identifiers={(DOMAIN, remote_id)},
-            name=remote_name,
-        )
+        self._attr_device_info = universal_remote_device_info(remote_id, remote_name)
 
     async def async_added_to_hass(self) -> None:
         """Handle entity added to Home Assistant."""
