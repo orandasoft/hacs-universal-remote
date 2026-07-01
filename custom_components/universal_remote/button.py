@@ -5,7 +5,6 @@ from typing import Any
 
 from homeassistant.components.button import ButtonEntity, ButtonEntityDescription
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import STATE_UNAVAILABLE
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.device_registry import DeviceInfo
@@ -23,6 +22,7 @@ from .const import (
 from .helpers import (
     command_create_button,
     command_payload,
+    linked_entity_is_available,
     normalize_command_name,
     normalize_command_objects,
     universal_remotes_from_config_entry,
@@ -175,8 +175,7 @@ class UniversalRemoteButton(ButtonEntity):
         if hass is None:
             return True
 
-        state = hass.states.get(self._infrared_emitter_id)
-        return state is not None and state.state != STATE_UNAVAILABLE
+        return linked_entity_is_available(hass, self._infrared_emitter_id)
 
     async def async_press(self) -> None:
         """Send the configured command."""
