@@ -8,6 +8,7 @@ import voluptuous as vol
 
 from homeassistant.components import infrared
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import STATE_UNAVAILABLE
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import entity_registry as er, selector
 
@@ -93,6 +94,15 @@ def available_infrared_receivers(
         )
 
     return dict(sorted(options.items()))
+
+
+def linked_entity_is_available(
+    hass: HomeAssistant,
+    entity_id: str,
+) -> bool:
+    """Return whether a linked entity exists and is not unavailable."""
+    state = hass.states.get(entity_id)
+    return state is not None and state.state != STATE_UNAVAILABLE
 
 
 def infrared_emitter_selector(

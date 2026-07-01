@@ -33,6 +33,7 @@ from custom_components.universal_remote.helpers import (
     infrared_receiver_field,
     infrared_receiver_field_with_current,
     infrared_receiver_selector,
+    linked_entity_is_available,
     normalize_command_mapping,
     normalize_command_name,
     normalize_command_objects,
@@ -41,6 +42,7 @@ from custom_components.universal_remote.helpers import (
     universal_remote_from_config_entry_data,
     universal_remotes_from_config_entry,
 )
+from homeassistant.const import STATE_UNAVAILABLE
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import entity_registry as er, selector
 
@@ -620,3 +622,37 @@ def test_universal_remotes_from_config_entry_rejects_malformed_single_entry_data
     )
 
     assert universal_remotes_from_config_entry(entry) == []
+
+
+def test_linked_entity_is_available_when_entity_exists(
+    hass: HomeAssistant,
+) -> None:
+    """Test linked entity availability returns true for an existing available entity."""
+    hass.states.async_set("infrared.test_emitter", "on")
+
+    assert linked_entity_is_available(hass, "infrared.test_emitter")
+
+
+def test_linked_entity_is_available_when_entity_missing(
+    hass: HomeAssistant,
+) -> None:
+    """Test linked entity availability returns false for a missing entity."""
+    assert not linked_entity_is_available(hass, "infrared.missing_emitter")
+
+
+def test_linked_entity_is_available_when_entity_unavailable(
+    hass: HomeAssistant,
+) -> None:
+    """Test linked entity availability returns false for an unavailable entity."""
+    hass.states.async_set("infrared.test_emitter", STATE_UNAVAILABLE)
+
+    assert not linked_entity_is_available(hass, "infrared.test_emitter")
+
+
+def test_linked_entity_is_available_preserves_unknown_behavior(
+    hass: HomeAssistant,
+) -> None:
+    """Test unknown linked entities are treated as available for compatibility."""
+    hass.states.async_set("infrared.test_emitter", "unknown")
+
+    assert linked_entity_is_available(hass, "infrared.test_emitter")
