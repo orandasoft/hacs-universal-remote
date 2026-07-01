@@ -24,6 +24,7 @@ from .const import (
     DOMAIN,
 )
 from .helpers import (
+    find_configured_command,
     linked_entity_is_available,
     normalize_command_mapping,
     universal_remotes_from_config_entry
@@ -479,16 +480,12 @@ class InfraredRemoteEntity(RemoteEntity):
                     await asyncio.sleep(delay_secs)
 
     def _configured_command_payload(self, command: str) -> str | None:
-        """Return configured command payload using case-insensitive command names."""
-        if command in self._commands:
-            return self._commands[command]
+        """Return configured command payload using normalized command names."""
+        configured_command = find_configured_command(self._commands, command)
+        if configured_command is None:
+            return None
 
-        normalized_command = command.upper()
-        for configured_command, payload in self._commands.items():
-            if configured_command.upper() == normalized_command:
-                return payload
-
-        return None
+        return configured_command[1]
 
     def _has_configured_command(self, command: str) -> bool:
         """Return whether a configured command exists."""
