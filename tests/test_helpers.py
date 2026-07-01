@@ -18,6 +18,7 @@ from custom_components.universal_remote.const import (
     CONF_REMOTE_NAME,
     DEVICE_TYPE_GENERIC,
     DEVICE_TYPE_TV,
+    DOMAIN,
 )
 from custom_components.universal_remote.helpers import (
     available_infrared_emitters,
@@ -40,6 +41,7 @@ from custom_components.universal_remote.helpers import (
     normalize_command_objects,
     normalize_remote_id,
     unique_remote_id,
+    universal_remote_device_info,
     universal_remote_from_config_entry_data,
     universal_remotes_from_config_entry,
 )
@@ -359,6 +361,17 @@ def test_normalize_command_objects_and_mapping() -> None:
         "POWER_ON": "38000:1,2",
         "POWER_OFF": "38000:3,4",
     }
+
+
+def test_universal_remote_device_info() -> None:
+    """Test universal remote device info preserves existing identifiers."""
+    device_info = universal_remote_device_info(
+        "living_room_tv",
+        "Living Room TV",
+    )
+
+    assert device_info["identifiers"] == {(DOMAIN, "living_room_tv")}
+    assert device_info["name"] == "Living Room TV"
 
 
 def test_universal_remote_infers_device_type_from_codeset() -> None:
