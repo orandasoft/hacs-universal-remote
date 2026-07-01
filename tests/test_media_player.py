@@ -339,6 +339,35 @@ def test_media_player_without_source_commands_has_no_source_feature(
     assert not entity.supported_features & MediaPlayerEntityFeature.SELECT_SOURCE
 
 
+async def test_media_player_cs4k_source_is_supported(
+    hass: HomeAssistant,
+    infrared_emitter: str,
+) -> None:
+    """Test CS4K command is exposed as a selectable TV source."""
+    entity = _media_player_entity(
+        hass,
+        infrared_emitter,
+        commands={"CS4K": _command_object(RAW_COMMAND)},
+    )
+
+    assert entity.source_list == ["CS4K"]
+    assert entity.supported_features & MediaPlayerEntityFeature.SELECT_SOURCE
+
+    with (
+        patch(
+            "custom_components.universal_remote.media_player."
+            "async_send_infrared_command",
+            AsyncMock(),
+        ) as mock_send,
+        patch.object(entity, "async_write_ha_state") as write_state,
+    ):
+        await entity.async_select_source("CS4K")
+
+    assert mock_send.await_args_list[0].args == (hass, infrared_emitter, RAW_COMMAND)
+    assert entity.source == "CS4K"
+    write_state.assert_called_once()
+
+    
 async def test_media_player_missing_role_raises(
     hass: HomeAssistant,
     infrared_emitter: str,
